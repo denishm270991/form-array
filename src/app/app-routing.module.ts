@@ -15,6 +15,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'see-task/:id',
+    loadComponent: () =>
+      import('../app/components/tasks/see-task/see-task.component').then(
+        (c) => c.SeeTaskComponent
+      ),
+  },
+  {
     path: 'people',
     loadComponent: () =>
       import('../app/components/people/people.component').then(

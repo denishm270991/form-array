@@ -109,14 +109,15 @@ export class NewTaskComponent implements OnInit {
     const values: TasksType = this.form.value;
     let id = this.tasksService.tasks().length + 1;
 
-    console.log(values);
-    return;
+  
     let task: TasksType = {
       id: id,
       title: values.title,
       date: values.date,
       completed: false,
+      people: values.people
     };
+
     this.tasksService.tasks.update((values) => {
       return [...values, task];
     });
