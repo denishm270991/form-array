@@ -1,0 +1,25 @@
+.content-table {
+  overflow-x: auto;
+  table {
+    tr {
+      border-bottom: 1px solid #ddd;
+      &:hover {
+        background-color: #d6eeee;
+      }
+    }
+  }
+}
+
+// @media screen and (max-width: 750px) {
+//   tbody,
+//   thead {
+//     float: left;
+//   }
+//   thead {
+//     min-width: 120px;
+//   }
+//   td,
+//   th {
+//     display: block;
+//   }
+// }
