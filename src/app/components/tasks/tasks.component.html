@@ -1,16 +1,26 @@
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">ID</th>
-      <th scope="col">Title</th>
-      <th scope="col">State</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let task of tasks; let i = index">
-      <td>{{ task.id }}</td>
-      <td>{{ task.title }}</td>
-      <td>{{ task.completed }}</td>
-    </tr>
-  </tbody>
-</table>
+<div class="wrap">
+  <div class="container">
+    <button class="btn btn-primary fr" routerLink="/new-task">Add Task</button>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Title</th>
+          <th scope="col">State</th>
+          <th scope="col">Options</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of tasksService.tasks(); let i = index">
+          <td>{{ task.id }}</td>
+          <td>{{ task.title }}</td>
+          <td>{{ task.completed }}</td>
+          <td>
+            <span (click)="see(task.id)" class="information">SEE</span>
+            <span class="delete">DELETE</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

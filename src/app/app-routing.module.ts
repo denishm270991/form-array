@@ -8,6 +8,13 @@ const routes: Routes = [
     component: TasksComponent,
   },
   {
+    path: 'new-task',
+    loadComponent: () =>
+      import('../app/components/tasks/new-task/new-task.component').then(
+        (c) => c.NewTaskComponent
+      ),
+  },
+  {
     path: 'people',
     loadComponent: () =>
       import('../app/components/people/people.component').then(

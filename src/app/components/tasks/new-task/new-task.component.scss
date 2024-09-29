@@ -1,0 +1,11 @@
+.card {
+  width: 500px;
+  margin: auto;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+@media only screen and (max-width: 768px) {
+  .card {
+    width: 95%;
+  }
+}

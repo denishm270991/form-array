@@ -1,30 +1,35 @@
-import { NgFor } from '@angular/common';
+import { NgClass, NgFor } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TasksService } from 'src/app/services/tasks.service';
 import { TasksType } from 'src/app/types/tasks.type';
 
 @Component({
   selector: 'app-tasks',
   standalone: true,
-  imports: [NgFor],
+  imports: [RouterLink, NgFor, FormsModule, ReactiveFormsModule, NgClass],
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.scss'],
 })
 export class TasksComponent {
-  tasks: TasksType[] = [];
 
-  constructor(private readonly tasksService: TasksService) {
-    this.getAllTasks();
+  constructor(public readonly tasksService: TasksService) {
+    // this.getAllTasks();
   }
 
   getAllTasks() {
     this.tasksService.getAllTasks().subscribe({
       next: (res) => {
-        this.tasks = res as TasksType[];
+        this.tasksService.tasks.set(res as TasksType[]);
       },
       error: (e) => {
         console.log(e);
       },
     });
+  }
+
+  see(idTask: number) {
+    console.log('show task');
   }
 }
