@@ -13,7 +13,11 @@
             id="title"
             placeholder="Nombre de la tarea"
             formControlName="title"
-            [ngClass]="{ 'is-invalid': (submitted && f['title'].errors) || !submitted && f['title'].touched && f['title'].errors }"
+            [ngClass]="{
+              'is-invalid':
+                (submitted && f['title'].errors) ||
+                (!submitted && f['title'].touched && f['title'].errors)
+            }"
           />
           <div
             *ngIf="
@@ -40,7 +44,11 @@
             id="date"
             placeholder="date"
             formControlName="date"
-            [ngClass]="{ 'is-invalid': (submitted && f['date'].errors) || !submitted && f['date'].touched && f['date'].errors }"
+            [ngClass]="{
+              'is-invalid':
+                (submitted && f['date'].errors) ||
+                (!submitted && f['date'].touched && f['date'].errors)
+            }"
           />
           <div
             *ngIf="
@@ -56,12 +64,13 @@
         </div>
       </div>
 
+      <!-- PEOPLE ASOCIATES -->
       <div class="row">
         <strong>Personas asociadas:</strong>
 
         <div formArrayName="people">
           <div
-            *ngFor="let person of people.controls; let i = index"
+            *ngFor="let person of getPeople(form); let i = index"
             [formGroupName]="i"
           >
             <div class="row">
@@ -71,7 +80,14 @@
                   type="text"
                   class="form-control"
                   formControlName="fullName"
-                  [ngClass]="{ 'is-invalid': (submitted && person.get('fullName')?.errors) || !submitted && person.get('fullName')?.touched && person.get('fullName')?.errors }"
+                  (input)="checkIfUniqueName(i)"
+                  [ngClass]="{
+                    'is-invalid':
+                      (submitted && person.get('fullName')?.errors) ||
+                      (!submitted &&
+                        person.get('fullName')?.touched &&
+                        person.get('fullName')?.errors)
+                  }"
                 />
                 <div
                   *ngIf="
@@ -87,6 +103,9 @@
                   <div *ngIf="person.get('fullName')?.errors?.['minlength']">
                     Nombre de la persona debe tener mínimo 5 caracteres
                   </div>
+                  <div *ngIf="person.get('fullName')?.errors?.['duplicatedFullName']">
+                    La misma persona no debe repetirse en una tarea
+                  </div>
                 </div>
               </div>
             </div>
@@ -97,24 +116,77 @@
                   type="number"
                   class="form-control"
                   formControlName="age"
-                  [ngClass]="{ 'is-invalid': (submitted && person.get('age')?.errors) || !submitted && person.get('age')?.touched && person.get('age')?.errors }"
+                  [ngClass]="{
+                    'is-invalid':
+                      (submitted && person.get('age')?.errors) ||
+                      (!submitted &&
+                        person.get('age')?.touched &&
+                        person.get('age')?.errors)
+                  }"
                 />
 
                 <div
-                *ngIf="
-                  (submitted && person.get('age')?.errors) ||
-                  (person.get('age')?.touched &&
-                    person.get('age')?.errors)
-                "
-                class="invalid-field"
-              >
-                <div *ngIf="person.get('age')?.errors?.['required']">
-                 Edad requerida
-                </div>
-                <div *ngIf="person.get('age')?.errors?.['min']">
-                  La edad mínima es de 18 años
+                  *ngIf="
+                    (submitted && person.get('age')?.errors) ||
+                    (person.get('age')?.touched && person.get('age')?.errors)
+                  "
+                  class="invalid-field"
+                >
+                  <div *ngIf="person.get('age')?.errors?.['required']">
+                    Edad requerida
+                  </div>
+                  <div *ngIf="person.get('age')?.errors?.['min']">
+                    La edad mínima es de 18 años
+                  </div>
                 </div>
               </div>
+            </div>
+
+            <div class="row">
+              <strong>Habilidades:</strong>
+              <div formArrayName="skills">
+                <div
+                  *ngFor="let skill of getSkills(person); let j = index"
+                  [formGroupName]="j"
+                  style="margin-bottom: 5px"
+                >
+                  <div class="input-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Habilidad"
+                      formControlName="name"
+                    />
+
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      (click)="addSkill(i)"
+                    >
+                      Añadir
+                    </button>
+                    <button
+                      *ngIf="getSizeSkillsByPositionPerson(i) > 1"
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      (click)="removeSkill(i, j)"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      (submitted && skill.get('name')?.errors) ||
+                      (skill.get('name')?.touched && skill.get('name')?.errors)
+                    "
+                    class="invalid-field"
+                  >
+                    <div *ngIf="skill.get('name')?.errors?.['required']">
+                      Habilidad requerida
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -129,9 +201,9 @@
               </div>
               <div class="col">
                 <button
-                  *ngIf="i > 0"
+                  *ngIf="getPeople(form).length > 1"
                   class="btn btn-danger form-control"
-                  (click)="deletePerson(i)"
+                  (click)="removePerson(i)"
                 >
                   Eliminar Persona
                 </button>
@@ -140,6 +212,7 @@
           </div>
         </div>
       </div>
+      <!-- PEOPLE ASOCIATES -->
 
       <div class="row">
         <div class="col">

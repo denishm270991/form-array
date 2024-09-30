@@ -1,9 +1,10 @@
-import { NgClass, NgFor } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { StateTaskPipe } from 'src/app/pipes/state-task.pipe';
 import { TasksService } from 'src/app/services/tasks.service';
+import { PersonType } from 'src/app/types/person.type';
 import { TasksType } from 'src/app/types/tasks.type';
 
 @Component({
@@ -11,6 +12,7 @@ import { TasksType } from 'src/app/types/tasks.type';
   standalone: true,
   imports: [
     RouterLink,
+    NgIf,
     NgFor,
     FormsModule,
     ReactiveFormsModule,
@@ -34,7 +36,7 @@ export class TasksComponent {
     public readonly tasksService: TasksService,
     private readonly router: Router
   ) {
-    this.getAllTasks();
+    this.tasks = this.tasksService.tasks();
   }
 
   getAllTasks() {

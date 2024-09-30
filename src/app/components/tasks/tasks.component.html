@@ -21,7 +21,7 @@
 
     <br />
     <div class="row">
-      <div class="col">
+      <div class="col" *ngIf="tasks.length > 0">
         <table class="table">
           <thead>
             <tr>
@@ -62,8 +62,9 @@
               </td>
             </tr>
           </tbody>
-        </table>
+        </table>       
       </div>
+      <h1 *ngIf="tasks.length === 0">No hay Tareas hasta el momento</h1>
     </div>
   </div>
 </div>

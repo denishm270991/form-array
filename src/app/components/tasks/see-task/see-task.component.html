@@ -1,3 +1,24 @@
-<p>{{task.id}}</p>
-<p>{{task.title}}</p>
-<p>{{task.completed}}</p>
+<div class="card see-task">
+  <div class="card-body">
+    <h5 class="card-title">Detalles de la tarea</h5>
+    <p>
+      <strong>{{ task.title }}</strong> - {{ task.date }}
+    </p>
+    <p><strong>Estado: </strong>{{ task.completed | stateTask }}</p>
+    <p><strong>Personas Asociadas:</strong></p>
+    <div *ngFor="let person of task.people">
+      <p style="margin-bottom: 0">&nbsp;-{{ person.fullName }} ({{ person.age }})</p>
+      <span><strong>&nbsp;&nbsp;&nbsp;-Habilidades:</strong></span>
+      <span *ngFor="let skill of person.skills; let pos = index">
+        <span> {{ skill.name }}
+          <span *ngIf="pos < person.skills.length-1">,</span>
+        </span>
+      </span>
+      <br />
+    </div>
+    <br />
+    <button class="btn btn-secondary form-control" routerLink="">
+      Listado de tareas
+    </button>
+  </div>
+</div>

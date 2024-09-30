@@ -1,8 +1,9 @@
 import { JsonPipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -12,12 +13,6 @@ import { Router, RouterLink } from '@angular/router';
 import { TasksService } from 'src/app/services/tasks.service';
 import { PersonType } from 'src/app/types/person.type';
 import { TasksType } from 'src/app/types/tasks.type';
-
-export type SkillType = {
-  positionPerson: number;
-  name: string;
-};
-
 @Component({
   selector: 'app-new-task',
   standalone: true,
@@ -33,11 +28,10 @@ export type SkillType = {
   templateUrl: './new-task.component.html',
   styleUrls: ['./new-task.component.scss'],
 })
-export class NewTaskComponent implements OnInit {
+export class NewTaskComponent {
   //FORM
   submitted: boolean = false;
   form: FormGroup;
-  skills: SkillType[] = [];
   skillName: string = 'name of skill ';
 
   constructor(
@@ -48,74 +42,97 @@ export class NewTaskComponent implements OnInit {
     this.form = this.formBuilder.group({
       title: ['', Validators.required],
       date: ['', Validators.required],
-      people: this.formBuilder.array([]),
+      people: new FormArray([this.initPerson()]),
     });
   }
-  ngOnInit(): void {
-    this.addPerson();
-    this.skills.push({ positionPerson: 0, name: '' });
+
+   checkIfUniqueName(index: number) {
+    let visitedList: string[] = [];
+    let valueArr: string[] = [];
+    const formArray = this.form.get('people') as FormArray;
+    formArray.controls.forEach((control) => {
+      visitedList.push(control.value.fullName);
+      valueArr = visitedList.filter(
+        (fullName) => fullName === control.value.fullName
+      );
+      if (valueArr.length > 1) {
+        control.get('fullName')?.setErrors({ duplicatedFullName: true });
+      }
+    });
+  }
+
+  initPerson() {
+    return new FormGroup({
+      fullName: new FormControl('', [
+        Validators.required,
+        Validators.minLength(5),
+      ]),
+      age: new FormControl(18, [Validators.required, Validators.min(18)]),
+      skills: new FormArray([this.initSkill()]),
+    });
+  }
+
+  initSkill() {
+    return new FormGroup({
+      name: new FormControl('', Validators.required),
+    });
+  }
+
+  addPerson() {
+    const control = <FormArray>this.form.get('people');
+    control.push(this.initPerson());
+  }
+
+  addSkill(j: number) {
+    const formArray = this.form.get('people') as FormArray;
+    const control = formArray.controls[j].get('skills') as FormArray;
+    control.push(this.initSkill());
   }
 
   get f() {
     return this.form.controls;
   }
-  get people(): FormArray {
-    return this.form.get('people') as FormArray;
+
+  getPeople(form: any) {
+    return form.controls.people.controls;
   }
 
-  addPerson() {
-    const person = this.formBuilder.group({
-      fullName: ['', [Validators.required, Validators.minLength(5)]],
-      age: [18, [Validators.required, Validators.min(18)]],
-      skills: [''],
-    });
-    this.people.push(person);
+  getSkills(form: any) {
+    return form.controls.skills.controls;
   }
 
-  deletePerson(index: number) {
-    this.people.removeAt(index);
+  getSizeSkillsByPositionPerson(i: number) {
+    const formArray = this.form.get('people') as FormArray;
+    const control = formArray.controls[i].get('skills') as FormArray;
+    return control.length;
   }
 
-  addSkill(positionPerson: number) {
-    console.log(positionPerson)
-   console.log( this.skills)
-   console.log(this.skillName)
-    for (let i = 0; i < this.skills.length; i++) {
-      if (this.skills[i].positionPerson === positionPerson) {
-        this.skills[i].name = this.skillName;
-        break;
-      }
-    }
-    console.log( this.skills)
+  removeSkill(i: number, j: number) {
+    const formArray = this.form.get('people') as FormArray;
+    const control = formArray.controls[i].get('skills') as FormArray;
+    control.removeAt(j);
   }
-  // deleteSkill(indexPerson: number, indexSkill: number) {
-  //   (this.people.at(indexPerson).get('skills') as FormArray).removeAt(
-  //     indexSkill
-  //   );
-  // }
 
-  // addSkill(indexPerson: number) {
-  //   const skill = this.formBuilder.group({
-  //     name: [''],
-  //   });
-  //   (this.people.at(indexPerson).get('skills') as FormArray).push(skill);
-  // }
+  removePerson(i: any) {
+    const control = <FormArray>this.form.get('people');
+    control.removeAt(i);
+  }
 
   onSubmit() {
     this.submitted = true;
 
-    console.log(this.form);
     if (this.form.invalid) return;
     const values: TasksType = this.form.value;
     let id = this.tasksService.tasks().length + 1;
+    let people: PersonType[] = [];
+    values.people.map((p) => people.push(p));
 
-  
     let task: TasksType = {
       id: id,
       title: values.title,
       date: values.date,
       completed: false,
-      people: values.people
+      people: people,
     };
 
     this.tasksService.tasks.update((values) => {

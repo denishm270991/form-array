@@ -21,13 +21,6 @@ const routes: Routes = [
         (c) => c.SeeTaskComponent
       ),
   },
-  {
-    path: 'people',
-    loadComponent: () =>
-      import('../app/components/people/people.component').then(
-        (c) => c.PeopleComponent
-      ),
-  },
 ];
 
 @NgModule({
