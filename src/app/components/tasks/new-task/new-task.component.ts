@@ -1,4 +1,4 @@
-import { JsonPipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import {
   FormArray,
@@ -22,8 +22,7 @@ import { TasksType } from 'src/app/types/tasks.type';
     NgClass,
     RouterLink,
     NgIf,
-    NgFor,
-    JsonPipe,
+    NgFor
   ],
   templateUrl: './new-task.component.html',
   styleUrls: ['./new-task.component.scss'],
@@ -32,7 +31,6 @@ export class NewTaskComponent {
   //FORM
   submitted: boolean = false;
   form: FormGroup;
-  skillName: string = 'name of skill ';
 
   constructor(
     private readonly formBuilder: FormBuilder,
@@ -46,7 +44,7 @@ export class NewTaskComponent {
     });
   }
 
-   checkIfUniqueName(index: number) {
+  checkIfUniqueName(index: number) {
     let visitedList: string[] = [];
     let valueArr: string[] = [];
     const formArray = this.form.get('people') as FormArray;
