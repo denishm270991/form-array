@@ -31,14 +31,14 @@ export class TasksService {
   getTaskByState(state: string) {
     let taskList: TasksType[] = [];
     switch (state) {
-      case '-1':
-        taskList = this.tasks();
-        break;
       case '0':
         taskList = this.tasks().filter((t) => !t.completed);
         break;
-      default:
+      case '1':
         taskList = this.tasks().filter((t) => t.completed);
+        break;
+      default:
+        taskList = this.tasks();
         break;
     }
     return taskList;

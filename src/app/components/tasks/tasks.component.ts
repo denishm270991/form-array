@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { StateTaskPipe } from 'src/app/pipes/state-task.pipe';
 import { TasksService } from 'src/app/services/tasks.service';
-import { PersonType } from 'src/app/types/person.type';
 import { TasksType } from 'src/app/types/tasks.type';
 
 @Component({
@@ -37,6 +36,7 @@ export class TasksComponent {
     private readonly router: Router
   ) {
     this.tasks = this.tasksService.tasks();
+    // this.getAllTasks(); //por si se quiere ver el listado de las tarea del API
   }
 
   getAllTasks() {
