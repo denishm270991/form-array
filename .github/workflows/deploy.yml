@@ -1,0 +1,44 @@
+name: publish
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  create-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.FORM_ARRAY_ANGULAR_TOKEN }}
+
+      - name: Build the Blog Docker image
+        run: |
+          docker build . --tag ghcr.io/denishm270991/form-array:latest
+          docker push ghcr.io/denishm270991/form-array:latest
+  deploy:
+    needs: create-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy App
+        uses: appleboy/ssh-action@v0.1.2
+        with:
+          host: ${{ secrets.HOST_VPS }}
+          username: ${{ secrets.USERNAME_VPS }}
+          port: ${{ secrets.PORT_VPS }}
+          password: ${{ secrets.PASSWORD_VPS }}
+          script: |
+            docker login ghcr.io -u denishm270991 -p ${{ secrets.FORM_ARRAY_ANGULAR_TOKEN }}
+            docker pull ghcr.io/denishm270991/form-array:latest
+            docker run -d \
+            --name form-array \
+            -p 4202:4000 \
+            -w /app \
+            --restart always \
+            ghcr.io/denishm270991/form-array:latest
