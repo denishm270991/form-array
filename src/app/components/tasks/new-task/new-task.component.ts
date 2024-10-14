@@ -16,14 +16,7 @@ import { TasksType } from 'src/app/types/tasks.type';
 @Component({
   selector: 'app-new-task',
   standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    NgClass,
-    RouterLink,
-    NgIf,
-    NgFor
-  ],
+  imports: [FormsModule, ReactiveFormsModule, NgClass, RouterLink, NgIf, NgFor],
   templateUrl: './new-task.component.html',
   styleUrls: ['./new-task.component.scss'],
 })
@@ -44,21 +37,6 @@ export class NewTaskComponent {
     });
   }
 
-  checkIfUniqueName(index: number) {
-    let visitedList: string[] = [];
-    let valueArr: string[] = [];
-    const formArray = this.form.get('people') as FormArray;
-    formArray.controls.forEach((control) => {
-      visitedList.push(control.value.fullName);
-      valueArr = visitedList.filter(
-        (fullName) => fullName === control.value.fullName
-      );
-      if (valueArr.length > 1) {
-        control.get('fullName')?.setErrors({ duplicatedFullName: true });
-      }
-    });
-  }
-
   initPerson() {
     return new FormGroup({
       fullName: new FormControl('', [
@@ -69,8 +47,13 @@ export class NewTaskComponent {
       skills: new FormArray([this.initSkill()]),
     });
   }
-
   initSkill() {
+    return new FormGroup({
+      name: new FormControl('', Validators.required),
+      versions: new FormArray([this.initVersion()]),
+    });
+  }
+  initVersion() {
     return new FormGroup({
       name: new FormControl('', Validators.required),
     });
@@ -82,9 +65,18 @@ export class NewTaskComponent {
   }
 
   addSkill(j: number) {
-    const formArray = this.form.get('people') as FormArray;
-    const control = formArray.controls[j].get('skills') as FormArray;
+    const formArrayPeople = this.form.get('people') as FormArray;
+    const control = formArrayPeople.controls[j].get('skills') as FormArray;
     control.push(this.initSkill());
+  }
+
+  addVersion(i: number, j: number) {
+    const formArrayPeople = this.form.get('people') as FormArray;
+    const formArraySkills = formArrayPeople.controls[i].get(
+      'skills'
+    ) as FormArray;
+    const control = formArraySkills.controls[j].get('versions') as FormArray;
+    control.push(this.initVersion());
   }
 
   get f() {
@@ -99,21 +91,58 @@ export class NewTaskComponent {
     return form.controls.skills.controls;
   }
 
+  getVersions(form: any) {
+    return form.controls.versions.controls;
+  }
+
+  removePerson(i: any) {
+    const control = <FormArray>this.form.get('people');
+    control.removeAt(i);
+  }
+
+  removeSkill(i: number, j: number) {
+    const formArrayPeople = this.form.get('people') as FormArray;
+    const control = formArrayPeople.controls[i].get('skills') as FormArray;
+    control.removeAt(j);
+  }
+
+  removeVersion(i: number, j: number, k: number) {
+    const formArrayPeople = this.form.get('people') as FormArray;
+    const formArraySkills = formArrayPeople.controls[i].get(
+      'skills'
+    ) as FormArray;
+    const control = formArraySkills.controls[j].get('versions') as FormArray;
+    control.removeAt(k);
+  }
+
   getSizeSkillsByPositionPerson(i: number) {
     const formArray = this.form.get('people') as FormArray;
     const control = formArray.controls[i].get('skills') as FormArray;
     return control.length;
   }
 
-  removeSkill(i: number, j: number) {
-    const formArray = this.form.get('people') as FormArray;
-    const control = formArray.controls[i].get('skills') as FormArray;
-    control.removeAt(j);
+  getSizeVerionsByPositionPersonAndSkills(i: number, j: number) {
+    const formArrayPeople = this.form.get('people') as FormArray;
+    const formArraySkills = formArrayPeople.controls[i].get(
+      'skills'
+    ) as FormArray;
+    const control = formArraySkills.controls[j].get('versions') as FormArray;
+    return control.length;
   }
 
-  removePerson(i: any) {
-    const control = <FormArray>this.form.get('people');
-    control.removeAt(i);
+  checkIfUniqueName(index: number) {
+    let visitedList: string[] = [];
+    let valueArr: string[] = [];
+    const formArray = this.form.get('people') as FormArray;
+    formArray.controls.forEach((control) => {
+      visitedList.push(control.value.fullName);
+      valueArr = visitedList.filter(
+        (fullName) => fullName === control.value.fullName
+      );
+      if (valueArr.length > 1) {
+        control.get('fullName')?.setErrors({ duplicatedFullName: true });
+      }
+    });
   }
 
   onSubmit() {

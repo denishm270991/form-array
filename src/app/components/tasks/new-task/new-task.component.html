@@ -65,17 +65,19 @@
       </div>
 
       <!-- PEOPLE ASOCIATES -->
-      <div class="row">
+      <div class="row people">
         <strong>Personas asociadas:</strong>
-
         <div formArrayName="people">
           <div
             *ngFor="let person of getPeople(form); let i = index"
             [formGroupName]="i"
+            class="people2"
           >
             <div class="row">
+              <div class="line"></div>
+
               <div class="form-group">
-                <label>Nombre completo</label><br />
+                <label>Nombre de la persona</label><br />
                 <input
                   type="text"
                   class="form-control"
@@ -103,7 +105,9 @@
                   <div *ngIf="person.get('fullName')?.errors?.['minlength']">
                     Nombre de la persona debe tener mínimo 5 caracteres
                   </div>
-                  <div *ngIf="person.get('fullName')?.errors?.['duplicatedFullName']">
+                  <div
+                    *ngIf="person.get('fullName')?.errors?.['duplicatedFullName']"
+                  >
                     La misma persona no debe repetirse en una tarea
                   </div>
                 </div>
@@ -141,8 +145,8 @@
                 </div>
               </div>
             </div>
-
-            <div class="row">
+            <!-- SKILLS ASOCIATES -->
+            <div class="row skills">
               <strong>Habilidades:</strong>
               <div formArrayName="skills">
                 <div
@@ -150,31 +154,15 @@
                   [formGroupName]="j"
                   style="margin-bottom: 5px"
                 >
-                  <div class="input-group">
+                  <div class="form-group">
+                    <div class="line2"></div>
                     <input
                       type="text"
                       class="form-control"
                       placeholder="Habilidad"
                       formControlName="name"
                     />
-
-                    <button
-                      class="btn btn-outline-secondary"
-                      type="button"
-                      (click)="addSkill(i)"
-                    >
-                      Añadir
-                    </button>
-                    <button
-                      *ngIf="getSizeSkillsByPositionPerson(i) > 1"
-                      class="btn btn-outline-secondary"
-                      type="button"
-                      (click)="removeSkill(i, j)"
-                    >
-                      Eliminar
-                    </button>
                   </div>
-
                   <div
                     *ngIf="
                       (submitted && skill.get('name')?.errors) ||
@@ -186,10 +174,84 @@
                       Habilidad requerida
                     </div>
                   </div>
+
+                  <!-- VERSIONS ASOCIATES -->
+                  <div class="row versions">
+                    <strong>Versiones:</strong>
+                    <div formArrayName="versions">
+                      <div
+                        *ngFor="let skill of getVersions(skill); let k = index"
+                        [formGroupName]="k"
+                        style="margin-bottom: 5px"
+                      >
+                        <div class="input-group">
+                          <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Version"
+                            formControlName="name"
+                          />
+
+                          <button
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            (click)="addVersion(i, j)"
+                          >
+                            Añadir
+                          </button>
+                          <button
+                            *ngIf="
+                              getSizeVerionsByPositionPersonAndSkills(i, j) > 1
+                            "
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            (click)="removeVersion(i, j, k)"
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+
+                        <div
+                          *ngIf="
+                            (submitted && skill.get('name')?.errors) ||
+                            (skill.get('name')?.touched &&
+                              skill.get('name')?.errors)
+                          "
+                          class="invalid-field"
+                        >
+                          <div *ngIf="skill.get('name')?.errors?.['required']">
+                            Versón requerida
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- VERSIONS ASOCIATES -->
+
+                  <div class="row">
+                    <div class="col">
+                      <button
+                        class="btn btn-primary form-control"
+                        (click)="addSkill(i)"
+                      >
+                        Añadir Habilidad
+                      </button>
+                    </div>
+                    <div class="col">
+                      <button
+                        *ngIf="getSizeSkillsByPositionPerson(i) > 1"
+                        class="btn btn-danger form-control"
+                        type="button"
+                        (click)="removeSkill(i, j)"
+                      >
+                        Eliminar Habilidad
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
+            <!-- SKILLS ASOCIATES -->
             <div class="row">
               <div class="col">
                 <button
@@ -208,10 +270,11 @@
                   Eliminar Persona
                 </button>
               </div>
-            </div>
+            </div>            
           </div>
         </div>
       </div>
+
       <!-- PEOPLE ASOCIATES -->
 
       <div class="row">
