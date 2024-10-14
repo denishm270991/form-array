@@ -38,7 +38,7 @@ jobs:
             docker pull ghcr.io/denishm270991/form-array:latest
             docker run -d \
             --name form-array \
-            -p 4202:4000 \
+            -p 4202:80 \
             -w /app \
             --restart always \
             ghcr.io/denishm270991/form-array:latest
